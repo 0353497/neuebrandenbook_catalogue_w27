@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 import 'package:quick_actions/quick_actions.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,6 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<HomePage> {
   String shortcut = 'no action set';
+  int itemsShown = 3;
 
   @override
   void initState() {
@@ -42,12 +46,132 @@ class _MyHomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(shortcut)),
-      body: const Center(
-        child: Text(
-          'On home screen, long press the app icon to '
-          'get Action one or Action two options. Tapping on that action should  '
-          'set the toolbar title.',
+      appBar: AppBar(title: Text("NeubrandenBook"), centerTitle: true),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: FutureBuilder(
+            future: JsonReader.readJson(),
+            builder: (context, asyncSnapshot) {
+              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              final data = asyncSnapshot.data!;
+              final List books =
+                  data
+                      .where((book) => book['saleCountInLast28Days'] > 500)
+                      .toList()
+                    ..sort(
+                      ((a, b) => (b['saleCountInLast28Days'] as int).compareTo(
+                        a['saleCountInLast28Days'],
+                      )),
+                    );
+
+              final Random random = Random(DateTime.now().day % 52);
+              final randombook = data[random.nextInt(data.length)];
+              return Column(
+                children: [
+                  Card(
+                    elevation: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        spacing: 12,
+                        children: [
+                          Text("Have you read this one yet?"),
+                          Row(
+                            spacing: 12,
+                            children: [
+                              Image.asset(
+                                "assets/images/Book-Covers/${randombook['id']}.png",
+                                width: 40,
+                              ),
+                              Column(
+                                crossAxisAlignment: .start,
+                                children: [
+                                  Text(randombook['title']),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    child: Text("Have a look!"),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            Text("Best sellers"),
+                            ElevatedButton(
+                              onPressed: () {},
+                              child: Text("View Catalogue"),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: GridView.builder(
+                            itemCount: itemsShown,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                ),
+                            itemBuilder: (context, index) {
+                              final book = books[index % books.length];
+                              return Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    spacing: 6,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/Book-Covers/${book['id']}.png",
+                                        width: 50,
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          spacing: 8,
+                                          crossAxisAlignment: .start,
+                                          mainAxisAlignment: .center,
+                                          children: [
+                                            Text(book["title"]),
+                                            Text(book['authorId']),
+                                            Text(
+                                              book['saleCountInLast28Days']
+                                                  .toString(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        if (books.length > itemsShown)
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                itemsShown += 3;
+                              });
+                            },
+                            child: Text("Show more …"),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
