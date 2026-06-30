@@ -71,10 +71,10 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                                           ),
                                         ),
                                       ),
-                                      for (int i = 0; i <= 60; i += 10)
+                                      for (int i = 0; i <= 70; i += 10)
                                         Align(
                                           alignment: Alignment(
-                                            ((i / 60) * 2) - 1,
+                                            ((i / 70) * 2) - 1,
                                             -1,
                                           ),
                                           child: Text("${startYear + i}"),
@@ -86,7 +86,7 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                                                               books[i]['publishingDate'],
                                                             ).year -
                                                             startYear) /
-                                                        60) *
+                                                        70) *
                                                     2) -
                                                 1,
                                             (i / books.length) * .1,
@@ -120,6 +120,11 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                                 itemBuilder: (context, index) {
                                   final book = books[index];
                                   return ListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedIndex = index;
+                                      });
+                                    },
                                     tileColor: selectedIndex == index
                                         ? Colors.blue
                                         : null,
