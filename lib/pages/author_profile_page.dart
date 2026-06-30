@@ -12,13 +12,31 @@ class AuthorProfilePage extends StatefulWidget {
 }
 
 class _AuthorProfilePageState extends State<AuthorProfilePage> {
+  final ScrollController timelineController = ScrollController();
+  final ScrollController listController = ScrollController();
+
+  late Future<dynamic> artistFuture;
+  late Future<List<dynamic>> booksFuture;
   int selectedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  @override
+  void dispose() {
+    timelineController.dispose();
+    listController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: JsonReader.readArtist(widget.id),
+        future: artistFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -43,7 +61,7 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                     ),
                   ),
                   FutureBuilder(
-                    future: JsonReader.getArtistBooks(widget.id),
+                    future: booksFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
@@ -57,6 +75,7 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                               width: double.maxFinite,
                               height: Get.height * .2,
                               child: SingleChildScrollView(
+                                controller: timelineController,
                                 scrollDirection: Axis.horizontal,
                                 child: SizedBox(
                                   width: Get.width * 2,
@@ -92,11 +111,7 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                                             (i / books.length) * .1,
                                           ),
                                           child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                selectedIndex = i;
-                                              });
-                                            },
+                                            onTap: () => selectBook(i, books),
                                             child: Container(
                                               width: 10,
                                               height: 10,
@@ -116,25 +131,27 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                             ),
                             Expanded(
                               child: ListView.builder(
+                                controller: listController,
                                 itemCount: books.length,
                                 itemBuilder: (context, index) {
                                   final book = books[index];
-                                  return ListTile(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedIndex = index;
-                                      });
-                                    },
-                                    tileColor: selectedIndex == index
-                                        ? Colors.blue
-                                        : null,
-                                    leading: Image.asset(
-                                      "assets/images/Book-Covers/${book['id']}.png",
-                                    ),
-                                    title: Text(book['title']),
-                                    subtitle: Text(
-                                      DateFormat('yyy').format(
-                                        DateTime.parse(book['publishingDate']),
+                                  return SizedBox(
+                                    height: Get.height * .2,
+                                    child: ListTile(
+                                      onTap: () => selectBook(index, books),
+                                      tileColor: selectedIndex == index
+                                          ? Colors.blue
+                                          : null,
+                                      leading: Image.asset(
+                                        "assets/images/Book-Covers/${book['id']}.png",
+                                      ),
+                                      title: Text(book['title']),
+                                      subtitle: Text(
+                                        DateFormat('yyy').format(
+                                          DateTime.parse(
+                                            book['publishingDate'],
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -153,5 +170,36 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
         },
       ),
     );
+  }
+
+  void selectBook(int index, List books) {
+    setState(() {
+      selectedIndex = index;
+    });
+
+    listController.animateTo(
+      index * 72.0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+
+    const double timelineWidth = 2.0;
+    const int startYear = 1970;
+    const int span = 70;
+
+    final year = DateTime.parse(books[index]['publishingDate']).year;
+
+    final x = ((year - startYear) / span) * (Get.width * timelineWidth);
+
+    timelineController.animateTo(
+      x - Get.width / 2,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void init() async {
+    booksFuture = JsonReader.getArtistBooks(widget.id);
+    artistFuture = JsonReader.readArtist(widget.id);
   }
 }
