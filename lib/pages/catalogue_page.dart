@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neuebrandenbook_catalogue/pages/book_preview_page.dart';
 import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CataloguePage extends StatefulWidget {
   const CataloguePage({super.key});
@@ -10,8 +11,11 @@ class CataloguePage extends StatefulWidget {
   State<CataloguePage> createState() => _CataloguePageState();
 }
 
+enum SortType { titleAsc, titleDesc, dateAsc, dateDesc, authorAsc, authorDesc }
+
 class _CataloguePageState extends State<CataloguePage> {
   late List books = [];
+  SortType currentSort = SortType.titleAsc;
 
   @override
   void initState() {
@@ -41,30 +45,19 @@ class _CataloguePageState extends State<CataloguePage> {
                         children: [
                           Text("title"),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Get.back();
-                              setState(() {
-                                books.sort(
-                                  (a, b) => (a['title'] as String).compareTo(
-                                    b['title'],
-                                  ),
-                                );
-                              });
+                              await applySort(SortType.titleAsc);
                             },
-                            child: Text('asc'),
+                            child: const Text("Asc"),
                           ),
+
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Get.back();
-                              setState(() {
-                                books.sort(
-                                  (a, b) => (b['title'] as String).compareTo(
-                                    a['title'],
-                                  ),
-                                );
-                              });
+                              await applySort(SortType.titleDesc);
                             },
-                            child: Text('desc'),
+                            child: const Text("Desc"),
                           ),
                         ],
                       ),
@@ -75,28 +68,19 @@ class _CataloguePageState extends State<CataloguePage> {
                         children: [
                           Text("publishingDate"),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Get.back();
-                              setState(() {
-                                books.sort(
-                                  (a, b) => (a['publishingDate'] as String)
-                                      .compareTo(b['publishingDate']),
-                                );
-                              });
+                              await applySort(SortType.dateAsc);
                             },
-                            child: Text('asc'),
+                            child: const Text("Asc"),
                           ),
+
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Get.back();
-                              setState(() {
-                                books.sort(
-                                  (a, b) => (b['publishingDate'] as String)
-                                      .compareTo(a['publishingDate']),
-                                );
-                              });
+                              await applySort(SortType.dateDesc);
                             },
-                            child: Text('desc'),
+                            child: const Text("Desc"),
                           ),
                         ],
                       ),
@@ -106,30 +90,18 @@ class _CataloguePageState extends State<CataloguePage> {
                         children: [
                           Text("author"),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Get.back();
-                              setState(() {
-                                books.sort(
-                                  (a, b) => (a['authorId'] as String).compareTo(
-                                    b['authorId'],
-                                  ),
-                                );
-                              });
+                              await applySort(SortType.authorAsc);
                             },
-                            child: Text('asc'),
+                            child: const Text("Asc"),
                           ),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Get.back();
-                              setState(() {
-                                books.sort(
-                                  (a, b) => (b['authorId'] as String).compareTo(
-                                    a['authorId'],
-                                  ),
-                                );
-                              });
+                              await applySort(SortType.authorDesc);
                             },
-                            child: Text('desc'),
+                            child: const Text("Desc"),
                           ),
                         ],
                       ),
@@ -214,6 +186,10 @@ class _CataloguePageState extends State<CataloguePage> {
     final data = await JsonReader.readJson();
     books = data..sort((a, b) => (a['title'] as String).compareTo(b['title']));
     setState(() {});
+    final prefs = await SharedPreferences.getInstance();
+    int index = prefs.getInt('sortType') ?? 0;
+
+    await applySort(SortType.values[index]);
 
     await Future.delayed(10.seconds);
     if (mounted) {
@@ -281,5 +257,65 @@ class _CataloguePageState extends State<CataloguePage> {
         ),
       );
     }
+  }
+
+  Future<void> applySort(SortType type) async {
+    currentSort = type;
+
+    switch (type) {
+      case SortType.titleAsc:
+        books.sort((a, b) => (a['title'] as String).compareTo(b['title']));
+        break;
+
+      case SortType.titleDesc:
+        books.sort((a, b) => (b['title'] as String).compareTo(a['title']));
+        break;
+
+      case SortType.dateAsc:
+        books.sort(
+          (a, b) =>
+              (a['publishingDate'] as String).compareTo(b['publishingDate']),
+        );
+        break;
+
+      case SortType.dateDesc:
+        books.sort(
+          (a, b) =>
+              (b['publishingDate'] as String).compareTo(a['publishingDate']),
+        );
+        break;
+
+      case SortType.authorAsc:
+        books.sort((a, b) {
+          int authorCompare = (a['authorId'] as String).compareTo(
+            b['authorId'],
+          );
+
+          if (authorCompare != 0) {
+            return authorCompare;
+          }
+
+          return (a['title'] as String).compareTo(b['title']);
+        });
+        break;
+      case SortType.authorDesc:
+        books.sort((a, b) {
+          int authorCompare = (b['authorId'] as String).compareTo(
+            a['authorId'],
+          );
+
+          if (authorCompare != 0) {
+            return authorCompare;
+          }
+
+          return (a['title'] as String).compareTo(b['title']);
+        });
+        break;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('sortType', type.index);
+
+    setState(() {});
   }
 }
