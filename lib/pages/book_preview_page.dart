@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:neuebrandenbook_catalogue/pages/author_profile_page.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -65,7 +68,14 @@ class _BookPreviewPageState extends State<BookPreviewPage> {
               Row(
                 mainAxisAlignment: .spaceBetween,
                 children: [
-                  Text("by: ${widget.book['authorId']}"),
+                  InkWell(
+                    onTap: () {
+                      Get.to(
+                        () => AuthorProfilePage(id: widget.book['authorId']),
+                      );
+                    },
+                    child: Text("by: ${widget.book['authorId']}"),
+                  ),
                   Text(
                     DateFormat(
                       'dd.MM.yyyy',

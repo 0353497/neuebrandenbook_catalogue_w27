@@ -8,4 +8,16 @@ class JsonReader {
     final data = await jsonDecode(json);
     return data;
   }
+
+  static Future<dynamic> readArtist(String id) async {
+    final json = await rootBundle.loadString("assets/data/authors.json");
+    final List data = await jsonDecode(json);
+    return data.firstWhere((author) => author['id'] == id);
+  }
+
+  static Future<List> getArtistBooks(String id) async {
+    final json = await rootBundle.loadString("assets/data/books.json");
+    final List data = await jsonDecode(json);
+    return data.where((book) => book['authorId'] == id).toList();
+  }
 }
