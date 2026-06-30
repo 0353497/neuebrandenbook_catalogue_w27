@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  get: ^4.7.3
+  quick_actions: ^1.1.0
+  share_plus: ^13.2.0
 
 dev_dependencies:
   flutter_test:
