@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neuebrandenbook_catalogue/pages/book_preview_page.dart';
 import 'package:neuebrandenbook_catalogue/pages/catalogue_page.dart';
 import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 import 'package:quick_actions/quick_actions.dart';
@@ -93,7 +94,9 @@ class _MyHomePageState extends State<HomePage> {
                                 children: [
                                   Text(randombook['title']),
                                   ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () => Get.to(
+                                      () => BookPreviewPage(book: randombook),
+                                    ),
                                     child: Text("Have a look!"),
                                   ),
                                 ],
@@ -126,32 +129,36 @@ class _MyHomePageState extends State<HomePage> {
                                 ),
                             itemBuilder: (context, index) {
                               final book = books[index % books.length];
-                              return Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    spacing: 6,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/Book-Covers/${book['id']}.png",
-                                        width: 50,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          spacing: 8,
-                                          crossAxisAlignment: .start,
-                                          mainAxisAlignment: .center,
-                                          children: [
-                                            Text(book["title"]),
-                                            Text(book['authorId']),
-                                            Text(
-                                              book['saleCountInLast28Days']
-                                                  .toString(),
-                                            ),
-                                          ],
+                              return InkWell(
+                                onTap: () =>
+                                    Get.to(() => BookPreviewPage(book: book)),
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      spacing: 6,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/Book-Covers/${book['id']}.png",
+                                          width: 50,
                                         ),
-                                      ),
-                                    ],
+                                        Expanded(
+                                          child: Column(
+                                            spacing: 8,
+                                            crossAxisAlignment: .start,
+                                            mainAxisAlignment: .center,
+                                            children: [
+                                              Text(book["title"]),
+                                              Text(book['authorId']),
+                                              Text(
+                                                book['saleCountInLast28Days']
+                                                    .toString(),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

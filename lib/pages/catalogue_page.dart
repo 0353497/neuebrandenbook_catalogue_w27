@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neuebrandenbook_catalogue/pages/book_preview_page.dart';
 import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 
 class CataloguePage extends StatefulWidget {
@@ -159,28 +160,31 @@ class _CataloguePageState extends State<CataloguePage> {
                       alignment: Alignment(-.2, -1),
                       isLabelVisible:
                           (book['saleCountInLast28Days'] as int) > 500,
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            spacing: 6,
-                            children: [
-                              Image.asset(
-                                "assets/images/Book-Covers/${book['id']}.png",
-                                width: 50,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  spacing: 8,
-                                  crossAxisAlignment: .start,
-                                  mainAxisAlignment: .center,
-                                  children: [
-                                    Text(book["title"]),
-                                    Text(book['authorId']),
-                                  ],
+                      child: InkWell(
+                        onTap: () => Get.to(() => BookPreviewPage(book: book)),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              spacing: 6,
+                              children: [
+                                Image.asset(
+                                  "assets/images/Book-Covers/${book['id']}.png",
+                                  width: 50,
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: Column(
+                                    spacing: 8,
+                                    crossAxisAlignment: .start,
+                                    mainAxisAlignment: .center,
+                                    children: [
+                                      Text(book["title"]),
+                                      Text(book['authorId']),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -245,7 +249,8 @@ class _CataloguePageState extends State<CataloguePage> {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () =>
+                          Get.to(() => BookPreviewPage(book: books.first)),
                       child: Text("I’ll give it a look"),
                     ),
                   ),

@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class BookPreviewPage extends StatelessWidget {
+class BookPreviewPage extends StatefulWidget {
   const BookPreviewPage({super.key, this.book});
   final dynamic book;
+
+  @override
+  State<BookPreviewPage> createState() => _BookPreviewPageState();
+}
+
+class _BookPreviewPageState extends State<BookPreviewPage> {
+  bool didShare = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(book['title']),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.share))],
+        title: Text(widget.book['title']),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final res = await SharePlus.instance.share(
+                ShareParams(
+                  text:
+                      'Have a look at "${widget.book['title']}"! \n https://neubrandenbook.blz-it.de/books/${widget.book['id']} \n Shared with the NeubrandenBook Catalogue App!',
+                ),
+              );
+              if (res.status == ShareResultStatus.success && mounted) {
+                setState(() {
+                  didShare = true;
+                });
+              }
+            },
+            icon: Icon(didShare ? Icons.check : Icons.share),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -24,11 +50,13 @@ class BookPreviewPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
+                      crossAxisAlignment: .start,
                       children: [
                         Image.asset(
-                          "assets/images/Book-Covers/${book['id']}.png",
+                          "assets/images/Book-Covers/${widget.book['id']}.png",
+                          width: 100,
                         ),
-                        Flexible(child: Text(book['abstract'])),
+                        Flexible(child: Text(widget.book['abstract'])),
                       ],
                     ),
                   ),
@@ -37,15 +65,21 @@ class BookPreviewPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: .spaceBetween,
                 children: [
-                  Text("by: ${book['authorId']}"),
+                  Text("by: ${widget.book['authorId']}"),
                   Text(
                     DateFormat(
                       'dd.MM.yyyy',
-                    ).format(DateTime.parse(book['publishingDate'])),
+                    ).format(DateTime.parse(widget.book['publishingDate'])),
                   ),
                 ],
               ),
-              ElevatedButton(onPressed: () {}, child: Text("Show at DNB")),
+              if (widget.book['dnbUrl'] != null)
+                ElevatedButton(
+                  onPressed: () {
+                    launchUrl(Uri.parse(widget.book['dnbUrl']));
+                  },
+                  child: Text("Show at DNB"),
+                ),
             ],
           ),
         ),
