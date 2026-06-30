@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _MyHomePageState extends State<HomePage> {
   String shortcut = 'no action set';
   int itemsShown = 3;
+  List books = [];
 
   @override
   void initState() {
@@ -32,17 +33,15 @@ class _MyHomePageState extends State<HomePage> {
     quickActions
         .setShortcutItems(<ShortcutItem>[
           const ShortcutItem(
-            type: "“I’m feeling lucky",
-            localizedTitle: "“I’m feeling lucky",
+            type: "I’m feeling lucky",
+            localizedTitle: "I’m feeling lucky",
             icon: 'ic_launcher',
           ),
         ])
-        .then((void _) {
-          setState(() {
-            if (shortcut == 'no action set') {
-              shortcut = 'actions ready';
-            }
-          });
+        .then((void _) async {
+          if (shortcut == 'no action set') {
+            shortcut = 'actions ready';
+          }
         });
   }
 
@@ -60,7 +59,7 @@ class _MyHomePageState extends State<HomePage> {
                 return Center(child: CircularProgressIndicator());
               }
               final data = asyncSnapshot.data!;
-              final List books =
+              books =
                   data
                       .where((book) => book['saleCountInLast28Days'] > 500)
                       .toList()
@@ -69,6 +68,7 @@ class _MyHomePageState extends State<HomePage> {
                         a['saleCountInLast28Days'],
                       )),
                     );
+              ditch();
 
               final Random random = Random(DateTime.now().day % 52);
               final randombook = data[random.nextInt(data.length)];
@@ -201,5 +201,14 @@ class _MyHomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void ditch() async {
+    if (shortcut == "I’m feeling lucky") {
+      final Random random = Random();
+      final randomIndex = random.nextInt(books.length);
+      await Future.delayed(1.seconds);
+      Get.to(() => BookPreviewPage(book: books[randomIndex]));
+    }
   }
 }
