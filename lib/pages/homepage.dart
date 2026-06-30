@@ -43,6 +43,8 @@ class _MyHomePageState extends State<HomePage> {
             shortcut = 'actions ready';
           }
         });
+
+    init();
   }
 
   @override
@@ -68,7 +70,6 @@ class _MyHomePageState extends State<HomePage> {
                         a['saleCountInLast28Days'],
                       )),
                     );
-              ditch();
 
               final Random random = Random(DateTime.now().day % 52);
               final randombook = data[random.nextInt(data.length)];
@@ -210,5 +211,9 @@ class _MyHomePageState extends State<HomePage> {
       await Future.delayed(1.seconds);
       Get.to(() => BookPreviewPage(book: books[randomIndex]));
     }
+  }
+
+  void init() async {
+    ditch();
   }
 }

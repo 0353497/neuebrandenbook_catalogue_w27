@@ -89,7 +89,7 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                                                         60) *
                                                     2) -
                                                 1,
-                                            0,
+                                            (i / books.length) * .1,
                                           ),
                                           child: InkWell(
                                             onTap: () {
