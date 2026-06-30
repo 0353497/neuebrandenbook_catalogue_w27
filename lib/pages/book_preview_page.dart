@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:neuebrandenbook_catalogue/pages/author_profile_page.dart';
 import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BookPreviewPage extends StatefulWidget {
@@ -18,6 +19,23 @@ class _BookPreviewPageState extends State<BookPreviewPage> {
   bool didShare = false;
 
   @override
+  void initState() {
+    super.initState();
+    loadSharedState();
+  }
+
+  Future<void> loadSharedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final sharedBooks = prefs.getStringList('sharedBooks') ?? [];
+
+    if (mounted) {
+      setState(() {
+        didShare = sharedBooks.contains(widget.book['id'].toString());
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -29,13 +47,29 @@ class _BookPreviewPageState extends State<BookPreviewPage> {
               final res = await SharePlus.instance.share(
                 ShareParams(
                   text:
-                      'Have a look at "${widget.book['title']}"! \n https://neubrandenbook.blz-it.de/books/${widget.book['id']} \n Shared with the NeubrandenBook Catalogue App!',
+                      'Have a look at "${widget.book['title']}"!\n'
+                      'https://neubrandenbook.blz-it.de/books/${widget.book['id']}\n'
+                      'Shared with the NeubrandenBook Catalogue App!',
                 ),
               );
-              if (res.status == ShareResultStatus.success && mounted) {
-                setState(() {
-                  didShare = true;
-                });
+
+              if (res.status == ShareResultStatus.success) {
+                final prefs = await SharedPreferences.getInstance();
+
+                final sharedBooks = prefs.getStringList('sharedBooks') ?? [];
+
+                final id = widget.book['id'].toString();
+
+                if (!sharedBooks.contains(id)) {
+                  sharedBooks.add(id);
+                  await prefs.setStringList('sharedBooks', sharedBooks);
+                }
+
+                if (mounted) {
+                  setState(() {
+                    didShare = true;
+                  });
+                }
               }
             },
             icon: Icon(didShare ? Icons.check : Icons.share),
