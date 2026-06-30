@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:neuebrandenbook_catalogue/pages/catalogue_page.dart';
 import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 import 'package:quick_actions/quick_actions.dart';
 
@@ -110,7 +112,7 @@ class _MyHomePageState extends State<HomePage> {
                           children: [
                             Text("Best sellers"),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () => Get.to(() => CataloguePage()),
                               child: Text("View Catalogue"),
                             ),
                           ],
