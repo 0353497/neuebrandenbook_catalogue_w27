@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   get: ^4.7.3
+  intl: ^0.20.3
   quick_actions: ^1.1.0
   share_plus: ^13.2.0
 
