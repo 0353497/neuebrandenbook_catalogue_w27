@@ -217,7 +217,9 @@ class _CataloguePageState extends State<CataloguePage> {
                           children: [
                             Text(books.first["title"]),
                             FutureBuilder(
-                              future: JsonReader.getName(books.first['id']),
+                              future: JsonReader.getName(
+                                books.first['authorId'],
+                              ),
                               builder: (context, asyncSnapshot) {
                                 if (asyncSnapshot.connectionState ==
                                     ConnectionState.waiting) {
