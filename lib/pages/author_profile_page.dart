@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 
-class AuthorProfilePage extends StatelessWidget {
+class AuthorProfilePage extends StatefulWidget {
   const AuthorProfilePage({super.key, required this.id});
   final String id;
+
+  @override
+  State<AuthorProfilePage> createState() => _AuthorProfilePageState();
+}
+
+class _AuthorProfilePageState extends State<AuthorProfilePage> {
+  int selectedIndex = -1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: JsonReader.readArtist(id),
+        future: JsonReader.readArtist(widget.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -34,7 +43,7 @@ class AuthorProfilePage extends StatelessWidget {
                     ),
                   ),
                   FutureBuilder(
-                    future: JsonReader.getArtistBooks(id),
+                    future: JsonReader.getArtistBooks(widget.id),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
@@ -70,11 +79,11 @@ class AuthorProfilePage extends StatelessWidget {
                                           ),
                                           child: Text("${startYear + i}"),
                                         ),
-                                      for (final book in books)
+                                      for (int i = 0; i < books.length; i++)
                                         Align(
                                           alignment: Alignment(
                                             (((DateTime.parse(
-                                                              book['publishingDate'],
+                                                              books[i]['publishingDate'],
                                                             ).year -
                                                             startYear) /
                                                         60) *
@@ -82,12 +91,21 @@ class AuthorProfilePage extends StatelessWidget {
                                                 1,
                                             0,
                                           ),
-                                          child: Container(
-                                            width: 10,
-                                            height: 10,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.green,
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedIndex = i;
+                                              });
+                                            },
+                                            child: Container(
+                                              width: 10,
+                                              height: 10,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: selectedIndex == i
+                                                    ? Colors.blue
+                                                    : Colors.green,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -102,10 +120,18 @@ class AuthorProfilePage extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   final book = books[index];
                                   return ListTile(
+                                    tileColor: selectedIndex == index
+                                        ? Colors.blue
+                                        : null,
                                     leading: Image.asset(
                                       "assets/images/Book-Covers/${book['id']}.png",
                                     ),
                                     title: Text(book['title']),
+                                    subtitle: Text(
+                                      DateFormat('yyy').format(
+                                        DateTime.parse(book['publishingDate']),
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
