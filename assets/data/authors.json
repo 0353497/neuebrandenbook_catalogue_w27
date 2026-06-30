@@ -1,0 +1,37 @@
+[
+  {
+    "id": "author-joachim-schiller",
+    "name": "Joachim Schiller",
+    "cv": "Joachim Schiller, born in 2001, is a German author who has been writing since his early teens. He published his debut novel, 'Der Schatz der Welten: Untergang', in 2021, which became the first installment of a highly acclaimed fantasy trilogy. The series is known for its intricate world-building and complex characters. Schiller's work has been praised for its blend of adventure and philosophical depth, making him a rising star in contemporary German literature."
+  },
+  {
+    "id": "author-paul-steinbeck",
+    "name": "Paul Steinbeck",
+    "cv": "Paul Steinbeck is the pen name of the author who was born in 1967 in Ravensburg, Upper Swabia. His real name is Hubert Romer. Paul Steinbeck is a native of Upper Swabia and lives in the Stuttgart region. He studied History, Geography, and Media Communication at the University of Trier, earning a Magister Artium degree."
+  },
+  {
+    "id": "author-elena-vasarhelyi",
+    "name": "Eléna Vásárhelyi",
+    "cv": "BA Comparative Literature, ELTE Budapest (2004–2008). Literary translator, Hungarian–German–English (2008–2018). Debut novel A Határ Innenső Oldala (This Side of the Border), 2018. Published by NeubrandenBook since 2020. Three-time Hungarian Book of the Year shortlistee. Translated into 11 languages."
+  },
+  {
+    "id": "author-finn-broekhuis",
+    "name": "Finn Broekhuis",
+    "cv": "BSc Physics, University of Amsterdam (2009–2013). Science journalist, NRC Handelsblad and De Ingenieur (2013–2021). Debut novel De Codekloof (NeubrandenBook, 2022). Television option acquired by VPRO, 2023. Non-fiction contributor, WorldSkills 2022 special report, De Ingenieur."
+  },
+  {
+    "id": "author-sarah-mclintock",
+    "name": "Sarah McLintock",
+    "cv": "MA History, University of St Andrews (2001–2005). Freelance journalist and essayist (2005–2013). The Salt Road (NeubrandenBook, 2014). The Tide Warden (NeubrandenBook, 2017) – Booker Prize longlist. What the Heron Knows (NeubrandenBook, 2021). The Ferryman's Daughter (NeubrandenBook, 2024). Teaches creative writing, University of Edinburgh."
+  },
+  {
+    "id": "author-tobias-wengler",
+    "name": "Tobias Wengler",
+    "cv": "MA History and Archival Studies, Universität Leipzig (1995–2001). Archivist, Stadtarchiv Leipzig (2001–2016). Das Schweigen der Akten (NeubrandenBook, 2017). Meridiane des Vergessens (NeubrandenBook, 2020). Die letzte Zeugin (NeubrandenBook, 2023). Literaturpreis Leipzig, 2018."
+  },
+  {
+    "id": "author-amara-diallo",
+    "name": "Amara Diallo",
+    "cv": "Qualified electrician, City & Guilds (2010–2012). BA Creative Writing, Goldsmiths, University of London (2015–2018). Skills of Gold (NeubrandenBook, 2023) – international bestseller. The Voltage Between Us (NeubrandenBook, 2025). WorldSkills Ambassador, 2024."
+  }
+]
