@@ -3,6 +3,7 @@ import 'package:get/get_core/get_core.dart';
 import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:neuebrandenbook_catalogue/pages/author_profile_page.dart';
+import 'package:neuebrandenbook_catalogue/services/json_reader.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -74,7 +75,16 @@ class _BookPreviewPageState extends State<BookPreviewPage> {
                         () => AuthorProfilePage(id: widget.book['authorId']),
                       );
                     },
-                    child: Text("by: ${widget.book['authorId']}"),
+                    child: FutureBuilder(
+                      future: JsonReader.getName(widget.book['authorId']),
+                      builder: (context, asyncSnapshot) {
+                        if (asyncSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return SizedBox.shrink();
+                        }
+                        return Text("by: ${asyncSnapshot.data.toString()}");
+                      },
+                    ),
                   ),
                   Text(
                     DateFormat(

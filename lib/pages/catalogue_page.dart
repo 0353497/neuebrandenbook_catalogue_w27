@@ -179,7 +179,18 @@ class _CataloguePageState extends State<CataloguePage> {
                                     mainAxisAlignment: .center,
                                     children: [
                                       Text(book["title"]),
-                                      Text(book['authorId']),
+                                      FutureBuilder(
+                                        future: JsonReader.getName(
+                                          book['authorId'],
+                                        ),
+                                        builder: (context, asyncSnapshot) {
+                                          if (asyncSnapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return SizedBox.shrink();
+                                          }
+                                          return Text(asyncSnapshot.data!);
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -229,7 +240,16 @@ class _CataloguePageState extends State<CataloguePage> {
                           mainAxisAlignment: .center,
                           children: [
                             Text(books.first["title"]),
-                            Text(books.first['authorId']),
+                            FutureBuilder(
+                              future: JsonReader.getName(books.first['id']),
+                              builder: (context, asyncSnapshot) {
+                                if (asyncSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return SizedBox.shrink();
+                                }
+                                return Text(asyncSnapshot.data!);
+                              },
+                            ),
                           ],
                         ),
                       ),

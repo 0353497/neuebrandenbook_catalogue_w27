@@ -149,7 +149,24 @@ class _MyHomePageState extends State<HomePage> {
                                             mainAxisAlignment: .center,
                                             children: [
                                               Text(book["title"]),
-                                              Text(book['authorId']),
+                                              FutureBuilder(
+                                                future: JsonReader.getName(
+                                                  book['authorId'],
+                                                ),
+                                                builder:
+                                                    (context, asyncSnapshot) {
+                                                      if (asyncSnapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
+                                                        return SizedBox.shrink();
+                                                      }
+                                                      return Text(
+                                                        asyncSnapshot.data
+                                                            .toString(),
+                                                      );
+                                                    },
+                                              ),
                                               Text(
                                                 book['saleCountInLast28Days']
                                                     .toString(),
